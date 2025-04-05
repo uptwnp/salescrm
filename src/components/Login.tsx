@@ -10,25 +10,16 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for saved credentials
+    // Check for saved credentials without expiration
     const savedUser = localStorage.getItem('loggedInUser');
-    const savedTimestamp = localStorage.getItem('loginTimestamp');
     
-    if (savedUser && savedTimestamp) {
-      const timestamp = parseInt(savedTimestamp);
-      const now = Date.now();
-      const sevenDays = 7 * 24 * 60 * 60 * 1000;
-      
-      if (now - timestamp < sevenDays) {
-        onLogin(savedUser);
-      } else {
-        // Clear expired credentials
-        localStorage.removeItem('loggedInUser');
-        localStorage.removeItem('loginTimestamp');
-      }
+    if (savedUser) {
+      onLogin(savedUser);
     }
+    setIsLoading(false);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,14 +31,18 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
     );
 
     if (user) {
-      // Save login info
+      // Save login info without timestamp
       localStorage.setItem('loggedInUser', username);
-      localStorage.setItem('loginTimestamp', Date.now().toString());
       onLogin(username);
     } else {
       setError('Invalid username or password');
     }
   };
+
+  // Show nothing while checking login status
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">

@@ -23,14 +23,9 @@ export const USER_CREDENTIALS: UserCredentials[] = [
 
 // Define default values for new leads
 export const DEFAULT_LEAD_VALUES = {
-  stage: 'Fresh',
+  stage: 'General Enquiry',
   priority: 1, // Low
   next_action: 'Take All Details',
-  next_action_time: (() => {
-    const date = new Date();
-    date.setHours(date.getHours() + 24); // Default to 24 hours from now
-    return date.toISOString();
-  })(),
   intent: 5,
   segment: 'Panipat',
   source: 'Instagram Organic',
@@ -42,11 +37,11 @@ export const LEAD_OPTIONS = {
   STAGES: [
     'Fresh',
     'Not Connected Yet',
-    'Invalid',
     'General Enquiry',
-    'Requirement Closed',
     'Engaged',
     'High Engagement',
+    'Waiting for Match',
+    'Match Found',
     'Visit Planned',
     'Visit Completed',
     'Awaiting Decision',
@@ -56,7 +51,11 @@ export const LEAD_OPTIONS = {
     'Token Received',
     'Registry Pending',
     'Deal Closed',
+    'Low Bids',
+    'Unrealstic Requirement',
     'Other',
+    'Requirement Closed',
+    'Invalid',
     'Lost'
   ],
 
@@ -67,6 +66,7 @@ export const LEAD_OPTIONS = {
     'Schedule Meeting',
     'Exercise Visit',
     'Finalize',
+    'Get Meeting Feedback',
     'Take Token',
     'Share Details to Partner',
     'Send Details',
@@ -77,8 +77,9 @@ export const LEAD_OPTIONS = {
 
   PROPERTY_TYPES: [
     'Plot Residential',
-    'Shop',
     'House',
+    'House or Plot',
+    'Shop',
     'Colony',
     'Flats',
     'Agriculture Land',
@@ -87,12 +88,28 @@ export const LEAD_OPTIONS = {
     'Factory',
     'Big Commercial',
     'Plot Industrial',
-    'Other'
+    'Other',
+    'Any',
+    'Multiple'
+  ],
+
+  SIZES: [
+    'Below 50 Gaj',
+    '50 to 70 Gaj',
+    '70 to 90 Gaj',
+    '90 to 110 Gaj',
+    '110 to 140 Gaj',
+    '140 to 180 Gaj',
+    '180 to 210 Gaj',
+    '210 to 250 Gaj',
+    '250 to 300 Gaj',
+    '300 Gaj+'
   ],
 
   PURPOSES: [
     'Living',
     'Investment',
+    'Rental Income',
     'Farming',
     'Business',
     'Development',
@@ -158,7 +175,6 @@ export const LEAD_OPTIONS = {
     'Follow Up',
     'Cold',
     'Archive',
-    'Dealers'
   ],
 
   PLACEMENTS: [
@@ -173,12 +189,13 @@ export const LEAD_OPTIONS = {
   ],
 
   ASSIGNEES: [
-    'Sharvan',
+    'Dealer',
     'Parmod',
     'Yogesh',
     'Mohit',
-    'Telecaller',
-    'Other'
+    'Uptown Team',
+    'Deepak',
+    'Komal'
   ]
 } as const;
 
@@ -195,6 +212,7 @@ export const MEDIUMS = LEAD_OPTIONS.MEDIUMS;
 export const LISTS = LEAD_OPTIONS.LISTS;
 export const PLACEMENTS = LEAD_OPTIONS.PLACEMENTS;
 export const ASSIGNEES = LEAD_OPTIONS.ASSIGNEES;
+export const SIZES = LEAD_OPTIONS.SIZES;
 
 // Derive types from the const arrays
 export type LeadStage = typeof LEAD_OPTIONS.STAGES[number] | null;
@@ -202,6 +220,7 @@ export type NextAction = typeof LEAD_OPTIONS.NEXT_ACTIONS[number] | null;
 export type PropertyType = typeof LEAD_OPTIONS.PROPERTY_TYPES[number];
 export type Purpose = typeof LEAD_OPTIONS.PURPOSES[number];
 export type Segment = typeof LEAD_OPTIONS.SEGMENTS[number];
+export type Size = typeof LEAD_OPTIONS.SIZES[number];
 
 // Export the Lead interface here since it's closely related to the options
 export interface Lead {
@@ -216,6 +235,7 @@ export interface Lead {
   budget: number | null;
   preferred_area: string | null;
   preferred_type: string | null;
+  size: string | null;
   purposes: string | null;
   stage: LeadStage;
   priority: number | null;

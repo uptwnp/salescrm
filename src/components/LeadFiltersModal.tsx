@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { LEAD_STAGES, NEXT_ACTIONS, PROPERTY_TYPES, PRIORITIES, SEGMENTS, PURPOSES, ASSIGNEES } from '../types/options';
+import { LEAD_STAGES, NEXT_ACTIONS, PROPERTY_TYPES, PRIORITIES, SEGMENTS, PURPOSES, ASSIGNEES, SIZES, TAGS } from '../types/options';
 import { FilterState } from '../types/filters';
+import { TagInput } from './TagInput';
 
 interface LeadFiltersModalProps {
   isOpen: boolean;
@@ -46,6 +47,8 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
     next_action_time: currentFilters.next_action_time || '',
     custom_date: currentFilters.custom_date || '',
     assigned_to: currentFilters.assigned_to || '',
+    show_all: currentFilters.show_all || '',
+    size: currentFilters.size || '',
     tags: currentTags
   });
 
@@ -87,6 +90,8 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
       next_action_time: '',
       custom_date: '',
       assigned_to: '',
+      show_all: '',
+      size: '',
       tags: []
     };
     setFilters(emptyFilters);
@@ -193,6 +198,17 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Size</label>
+              <TagInput
+                value={(filters.size || '').split(',').filter(Boolean)}
+                onChange={(values) => setFilters({ ...filters, size: values.join(',') })}
+                suggestions={SIZES}
+                allowCustom={false}
+                placeholder="Select sizes..."
+              />
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Purpose</label>
               <select
                 className="w-full p-2 border rounded-lg"
@@ -251,7 +267,6 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
               </select>
             </div>
 
-            {/* Only show assigned_to filter for admin users */}
             {isAdmin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
@@ -270,13 +285,26 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded-lg"
-                value={filters.tags?.join(',')}
-                onChange={(e) => setFilters({ ...filters, tags: e.target.value.split(',').map(tag => tag.trim()) })}
+              <TagInput
+                value={filters.tags || []}
+                onChange={(values) => setFilters({ ...filters, tags: values })}
+                suggestions={TAGS}
+                allowCustom={true}
                 placeholder="Enter tags (comma separated)"
               />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="show_all"
+                checked={filters.show_all === '1'}
+                onChange={(e) => setFilters({ ...filters, show_all: e.target.checked ? '1' : '' })}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label htmlFor="show_all" className="text-sm font-medium text-gray-700">
+                Show all leads (including Lost, Requirement Closed, and Invalid)
+              </label>
             </div>
           </div>
         </div>

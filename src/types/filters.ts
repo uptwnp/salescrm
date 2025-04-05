@@ -11,6 +11,8 @@ export interface FilterState {
   next_action_time?: string;
   custom_date?: string;
   assigned_to?: string;
+  show_all?: string;
+  size?: string;
   tags?: string[];
 }
 

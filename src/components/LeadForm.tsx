@@ -18,7 +18,8 @@ import {
   MEDIUMS,
   LISTS,
   PLACEMENTS,
-  DEFAULT_LEAD_VALUES 
+  DEFAULT_LEAD_VALUES,
+  SIZES 
 } from '../types/options';
 
 interface LeadFormProps {
@@ -327,7 +328,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({
             <h2 className="text-lg font-semibold text-rich">
               {lead.id ? `#${lead.id} ${lead.name}` : 'Add New Lead'}
             </h2>
-            {lead.id && <p className="text-medium">{lead.segment} - {lead.budget}</p>}
+            {lead.id && <p className="text-medium">{lead.segment} - {lead.budget} Lakh</p>}
           </div>
           <button 
             onClick={onClose} 
@@ -379,6 +380,29 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                 </div>
 
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Size</label>
+                  <TagInput
+                    value={(formData.size || '').split(',').filter(Boolean)}
+                    onChange={(values) => isNewLead ? handleFieldChange('size', values.join(',')) : handleImmediateUpdate('size', values.join(','))}
+                    suggestions={SIZES}
+                    allowCustom={false}
+                    placeholder="Select sizes..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Area</label>
+                  <input
+                    type="text"
+                    className="w-full p-2 border rounded-lg"
+                    value={formData.preferred_area || ''}
+                    onChange={(e) => handleFieldChange('preferred_area', e.target.value)}
+                    onBlur={() => handleFieldBlur('preferred_area')}
+                    placeholder="Enter preferred area"
+                  />
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Property Types</label>
                   <select
                     className="w-full p-2 border rounded-lg"
@@ -407,14 +431,15 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Area</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Intent</label>
                   <input
-                    type="text"
+                    type="number"
                     className="w-full p-2 border rounded-lg"
-                    value={formData.preferred_area || ''}
-                    onChange={(e) => handleFieldChange('preferred_area', e.target.value)}
-                    onBlur={() => handleFieldBlur('preferred_area')}
-                    placeholder="Enter preferred area"
+                    min="1"
+                    max="10"
+                    value={formData.intent || ''}
+                    onChange={(e) => handleFieldChange('intent', Number(e.target.value))}
+                    onBlur={() => handleFieldBlur('intent')}
                   />
                 </div>
               </div>
@@ -478,19 +503,6 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                     value={formData.note || ''}
                     onChange={(e) => handleFieldChange('note', e.target.value)}
                     onBlur={() => handleFieldBlur('note')}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Intent</label>
-                  <input
-                    type="number"
-                    className="w-full p-2 border rounded-lg"
-                    min="1"
-                    max="10"
-                    value={formData.intent || ''}
-                    onChange={(e) => handleFieldChange('intent', Number(e.target.value))}
-                    onBlur={() => handleFieldBlur('intent')}
                   />
                 </div>
               </div>
@@ -733,56 +745,39 @@ export const LeadForm: React.FC<LeadFormProps> = ({
               </button>
               <button
                 type="submit"
+                className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-                onClick={handleSubmit}
               >
-                {isSubmitting ? 'Creating...' : 'Create'}
+                {isSubmitting ? 'Creating...' : 'Create Lead'}
               </button>
             </div>
           )}
         </div>
-      </div>
 
-      {showDeleteConfirm && (
-        <div 
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <div 
-            className="delete-modal-content bg-white rounded-lg p-6 max-w-sm mx-4 w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-semibold mb-2">Delete Lead</h3>
-            <p className="text-gray-600 mb-4">
-              Are you sure you want to delete this lead? This action cannot be undone.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowDeleteConfirm(false);
-                }}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete();
-                }}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                disabled={isDeleting}
-              >
-                {isDeleting ? 'Deleting...' : 'Delete'}
-              </button>
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
+            <div className="delete-modal-content bg-white w-[90%] max-w-md rounded-lg p-6 space-y-4">
+              <h3 className="text-lg font-semibold text-rich">Delete Lead</h3>
+              <p className="text-medium">Are you sure you want to delete this lead? This action cannot be undone.</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

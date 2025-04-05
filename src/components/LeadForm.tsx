@@ -229,18 +229,18 @@ export const LeadForm: React.FC<LeadFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!lead.id && !isSubmitting) {
-      try {
-        setIsSubmitting(true);
-        await onSubmit(formData);
-        toast.success('Lead created successfully', { duration: 2000 });
-        onClose();
-      } catch (error) {
-        console.error('Failed to create lead:', error);
-        toast.error('Failed to create lead', { duration: 2000 });
-      } finally {
-        setIsSubmitting(false);
-      }
+    if (isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+      await onSubmit(formData);
+      toast.success('Lead created successfully', { duration: 2000 });
+      onClose();
+    } catch (error) {
+      console.error('Failed to create lead:', error);
+      toast.error('Failed to create lead', { duration: 2000 });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -272,12 +272,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({
   const handleWhatsApp = () => {
     if (formData.phone) {
       const phone = formData.phone.replace(/\D/g, '');
-      const text = `🏢 *Lead Details* #${formData.id}\n\n` +
-        `👤 *Name:* ${formData.name || 'Not Set'}\n` +
-        `📞 *Phone:* ${formData.phone}\n` +
-        `📍 *Address:* ${formData.address || 'Not Set'}\n` +
-        `💰 *Budget:* ${formData.budget ? `${formData.budget}L` : 'Not Set'}\n\n` +
-        `📝 *Requirement:*\n_${formData.requirement_description || 'Not Set'}_`;
+      const text = `Hello ${formData.name || 'Not Set'}\n Ji`;
       
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
     } else {
@@ -328,7 +323,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({
             <h2 className="text-lg font-semibold text-rich">
               {lead.id ? `#${lead.id} ${lead.name}` : 'Add New Lead'}
             </h2>
-            {lead.id && <p className="text-medium">{lead.segment} - {lead.budget} Lakh</p>}
+            {lead.id && <p className="text-medium">{lead.segment} - {lead.budget} Lakh</p>} 
           </div>
           <button 
             onClick={onClose} 
@@ -391,18 +386,6 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Area</label>
-                  <input
-                    type="text"
-                    className="w-full p-2 border rounded-lg"
-                    value={formData.preferred_area || ''}
-                    onChange={(e) => handleFieldChange('preferred_area', e.target.value)}
-                    onBlur={() => handleFieldBlur('preferred_area')}
-                    placeholder="Enter preferred area"
-                  />
-                </div>
-
-                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Property Types</label>
                   <select
                     className="w-full p-2 border rounded-lg"
@@ -428,6 +411,18 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                       <option key={purpose} value={purpose}>{purpose}</option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Area</label>
+                  <input
+                    type="text"
+                    className="w-full p-2 border rounded-lg"
+                    value={formData.preferred_area || ''}
+                    onChange={(e) => handleFieldChange('preferred_area', e.target.value)}
+                    onBlur={() => handleFieldBlur('preferred_area')}
+                    placeholder="Enter preferred area"
+                  />
                 </div>
 
                 <div>
@@ -744,9 +739,10 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                 Cancel
               </button>
               <button
-                type="submit"
-                className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                type="button"
+                onClick={handleSubmit}
                 disabled={isSubmitting}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? 'Creating...' : 'Create Lead'}
               </button>

@@ -139,12 +139,12 @@ export const LEAD_OPTIONS = {
   ],
 
   SOURCES: [
+    "ManyChats",
     "M3M Website Ads",
     "M3M Website Organic",
     "Instagram Ads",
     "Instagram Organic",
     "Facebook",
-    "ManyChats",
     "Youtube",
     "Other Internet",
     "Personal Network",

@@ -29,7 +29,6 @@ import {
   MEDIUMS,
   LISTS,
   PLACEMENTS,
-  DEAL_STATUS,
   VISIT_STATUS,
   PURCHASE_TIMELINE,
 } from "../types/options";
@@ -106,14 +105,7 @@ const DEFAULT_COLUMNS: Column[] = [
   },
 
   // Status Information
-  {
-    key: "deal_status",
-    label: "Deal Status",
-    visible: true,
-    editable: true,
-    sortable: true,
-    minWidth: 150,
-  },
+
   {
     key: "visit_status",
     label: "Visit Status",
@@ -436,8 +428,6 @@ export const LeadList: React.FC<LeadListProps> = ({
         return LISTS;
       case "placement":
         return PLACEMENTS;
-      case "deal_status":
-        return DEAL_STATUS;
       case "visit_status":
         return VISIT_STATUS;
       case "purchase_timeline":
@@ -457,7 +447,6 @@ export const LeadList: React.FC<LeadListProps> = ({
       case "preferred_type":
       case "purposes":
       case "medium":
-      case "deal_status":
       case "visit_status":
       case "purchase_timeline":
         return "select";

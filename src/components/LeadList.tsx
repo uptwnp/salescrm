@@ -701,7 +701,7 @@ export const LeadList: React.FC<LeadListProps> = ({
                               >
                                 {column.editable &&
                                 (isAdmin || column.key !== "stage") ? (
-                                  <div className="inline-edit min-w-[150px]">
+                                  <div className="inline-edit min-w-[250px]">
                                     <InlineEdit
                                       value={lead[column.key]}
                                       onSave={(value) =>

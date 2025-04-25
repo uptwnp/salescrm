@@ -35,28 +35,28 @@ export const DEFAULT_LEAD_VALUES = {
 // Define all options as const arrays
 export const LEAD_OPTIONS = {
   STAGES: [
-  "Init - Fresh",
-  "Init - Not Connected Yet",
-  "Init - General Enquiry",
-  "Mid - Waiting for Match",
-  "Mid - Options Ready",
-  "Mature - Selected Options",
-  "Mature - Awaiting Decision",
-  "Mature - Exploring Other Options",
-  "Mature - May Finalize",
-  "Deal - In Negotiation",
-  "Deal - Finalized",
-  "Deal - Token Received",
-  "Deal - Registry Pending",
-  "Deal - Deal Closed",
-  "Deal - Commission Pending",
-  "Negative - Low Bids",
-  "Negative - Budget Issue",
-  "Negative - Unrealistic Requirement",
-  "Negative - Requirement Closed",
-  "Negative - Invalid",
-  "Negative - Lost",
-  "Other"
+    "Init - Fresh",
+    "Init - Not Connected Yet",
+    "Init - General Enquiry",
+    "Mid - Waiting for Match",
+    "Mid - Options Ready",
+    "Mat - Selected Options",
+    "Mat - Awaiting Decision",
+    "Mat - Exploring Other Options",
+    "Mat - May Finalize",
+    "Deal - In Negotiation",
+    "Deal - Finalized",
+    "Deal - Token Received",
+    "Deal - Registry Pending",
+    "Deal - Deal Closed",
+    "Deal - Commission Pending",
+    "Neg - Low Bids",
+    "Neg - Budget Issue",
+    "Neg - Unrealistic",
+    "Neg - Req Closed",
+    "Neg - Invalid",
+    "Neg - Lost",
+    "Other",
   ],
 
   DEAL_STATUS: [
@@ -145,11 +145,7 @@ export const LEAD_OPTIONS = {
     "Development",
     "Other",
   ],
-    INTENT: [
-    "Hot",
-    "Cold",
-    "Warm",
-  ],
+  INTENT: ["Hot", "Cold", "Warm"],
 
   PRIORITIES: [
     { value: 1, label: "Low" },
@@ -265,7 +261,9 @@ export type Segment = (typeof LEAD_OPTIONS.SEGMENTS)[number];
 export type Size = (typeof LEAD_OPTIONS.SIZES)[number];
 export type DealStatus = (typeof LEAD_OPTIONS.DEAL_STATUS)[number] | null;
 export type VisitStatus = (typeof LEAD_OPTIONS.VISIT_STATUS)[number] | null;
-export type PurchaseTimeline = (typeof LEAD_OPTIONS.PURCHASE_TIMELINE)[number] | null;
+export type PurchaseTimeline =
+  | (typeof LEAD_OPTIONS.PURCHASE_TIMELINE)[number]
+  | null;
 
 // Export the Lead interface here since it's closely related to the options
 export interface Lead {

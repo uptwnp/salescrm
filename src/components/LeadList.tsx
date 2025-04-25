@@ -109,7 +109,7 @@ const DEFAULT_COLUMNS: Column[] = [
   {
     key: "visit_status",
     label: "Visit Status",
-    visible: true,
+    visible: false,
     editable: true,
     sortable: true,
     minWidth: 150,
@@ -117,7 +117,7 @@ const DEFAULT_COLUMNS: Column[] = [
   {
     key: "purchase_timeline",
     label: "When Buy",
-    visible: true,
+    visible: false,
     editable: true,
     sortable: true,
     minWidth: 150,

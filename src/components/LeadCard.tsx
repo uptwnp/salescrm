@@ -138,6 +138,22 @@ export const LeadCard: React.FC<LeadCardProps> = ({ lead, onClick }) => {
           </div>
         )}
 
+        {lead.preferred_type && (
+          <div className="flex items-center gap-2">
+            <Building size={16} className="text-gray-400" />
+            <div className="flex flex-wrap gap-1">
+              {lead.preferred_type.split(',').map((type, index) => (
+                <span
+                  key={index}
+                  className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full"
+                >
+                  {type.trim()}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {lead.requirement_description && (
           <div className="flex items-start gap-2 text-gray-600 mt-2">
             <MessageSquare size={16} className="text-gray-400 shrink-0 mt-1" />

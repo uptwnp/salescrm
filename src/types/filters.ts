@@ -1,6 +1,7 @@
 export interface FilterState {
   stage?: string;
   priority?: string;
+  intent?: string;
   next_action?: string;
   preferred_type?: string;
   budget_min?: string;

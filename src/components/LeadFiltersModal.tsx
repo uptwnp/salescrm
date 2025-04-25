@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { LEAD_STAGES, NEXT_ACTIONS, PROPERTY_TYPES, PRIORITIES, SEGMENTS, PURPOSES, ASSIGNEES, SIZES, TAGS, DEAL_STATUS, VISIT_STATUS, PURCHASE_TIMELINE } from '../types/options';
+import { LEAD_STAGES, INTENT,SOURCES, NEXT_ACTIONS, PROPERTY_TYPES, PRIORITIES, SEGMENTS, PURPOSES, ASSIGNEES, SIZES, TAGS, DEAL_STATUS, VISIT_STATUS, PURCHASE_TIMELINE } from '../types/options';
 import { FilterState } from '../types/filters';
 import { TagInput } from './TagInput';
 
@@ -37,6 +37,8 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
   const [filters, setFilters] = useState<FilterState>({
     stage: currentFilters.stage || '',
     priority: currentFilters.priority || '',
+    intent: currentFilters.intent || '',
+
     next_action: currentFilters.next_action || '',
     preferred_type: currentFilters.preferred_type || '',
     budget_min: currentFilters.budget_min || '',
@@ -83,8 +85,9 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
     const emptyFilters: FilterState = {
       stage: '',
       priority: '',
+        intent: '',
       next_action: '',
-      preferred_type: '',
+      pbjhreferred_type: '',
       budget_min: '',
       budget_max: '',
       source: '',
@@ -174,6 +177,20 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
                 ))}
               </select>
             </div>
+              <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Intent</label>
+  <select
+    className="w-full p-2 border rounded-lg"
+    value={filters.intent}
+    onChange={(e) => setFilters({ ...filters, intent: e.target.value })}
+  >
+    <option value="">All Intents</option>
+    {INTENT.map(intent => (
+      <option key={intent} value={intent}>{intent}</option>
+    ))}
+  </select>
+</div>
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Next Action</label>
@@ -191,16 +208,13 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Property Type</label>
-              <select
-                className="w-full p-2 border rounded-lg"
-                value={filters.preferred_type}
-                onChange={(e) => setFilters({ ...filters, preferred_type: e.target.value })}
-              >
-                <option value="">All Types</option>
-                {PROPERTY_TYPES.map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
+              <TagInput
+                value={(filters.preferred_type || '').split(',').filter(Boolean)}
+                onChange={(values) => setFilters({ ...filters, preferred_type: values.join(',') })}
+                suggestions={PROPERTY_TYPES}
+                allowCustom={false}
+                placeholder="Select property types..."
+              />
             </div>
 
             <div>

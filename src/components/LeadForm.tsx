@@ -10,6 +10,7 @@ import {
   NEXT_ACTIONS, 
   PROPERTY_TYPES, 
   PURPOSES, 
+  INTENT,
   PRIORITIES, 
   SEGMENTS,
   TAGS,
@@ -273,15 +274,16 @@ export const LeadForm: React.FC<LeadFormProps> = ({
   };
 
   const handleWhatsApp = () => {
-    if (formData.phone) {
-      const phone = formData.phone.replace(/\D/g, '');
-      const text = `Hello ${formData.name || 'Not Set'}\n Ji`;
-      
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
-    } else {
-      toast.error('No phone number available');
-    }
-  };
+  if (formData.phone) {
+    const phone = formData.phone.replace(/\D/g, '');
+    const text = `Hello ${formData.name || 'Not Set'}\n Ji`;
+
+    window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(text)}`, '_blank');
+  } else {
+    toast.error('No phone number available');
+  }
+};
+
 
   const handleShare = () => {
     const text = `🏢 Lead Details #${formData.id}\n\n` +
@@ -376,7 +378,40 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                     placeholder="Enter budget in lakhs"
                   />
                 </div>
-
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Area</label>
+                  <input
+                    type="text"
+                    className="w-full p-2 border rounded-lg"
+                    value={formData.preferred_area || ''}
+                    onChange={(e) => handleFieldChange('preferred_area', e.target.value)}
+                    onBlur={() => handleFieldBlur('preferred_area')}
+                    placeholder="Enter preferred area"
+                  />
+                </div>
+ <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Property Types</label>
+                  <TagInput
+                    value={(formData.preferred_type || '').split(',').filter(Boolean)}
+                    onChange={(values) => isNewLead ? handleFieldChange('preferred_type', values.join(',')) : handleImmediateUpdate('preferred_type', values.join(','))}
+                    suggestions={PROPERTY_TYPES}
+                    allowCustom={false}
+                    placeholder="Select property types..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Timeline</label>
+                  <select
+                    className="w-full p-2 border rounded-lg"
+                    value={formData.purchase_timeline || ''}
+                    onChange={(e) => isNewLead ? handleFieldChange('purchase_timeline', e.target.value) : handleImmediateUpdate('purchase_timeline', e.target.value)}
+                  >
+                    <option value="">Not Set</option>
+                    {PURCHASE_TIMELINE.map(timeline => (
+                      <option key={timeline} value={timeline}>{timeline}</option>
+                    ))}
+                  </select>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Size</label>
                   <TagInput
@@ -388,19 +423,9 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Property Types</label>
-                  <select
-                    className="w-full p-2 border rounded-lg"
-                    value={formData.preferred_type || ''}
-                    onChange={(e) => isNewLead ? handleFieldChange('preferred_type', e.target.value) : handleImmediateUpdate('preferred_type', e.target.value)}
-                  >
-                    <option value="">Select Property Type</option>
-                    {PROPERTY_TYPES.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
+                
+
+               
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Purpose</label>
@@ -415,20 +440,23 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                     ))}
                   </select>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Area</label>
-                  <input
-                    type="text"
+                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Intent</label>
+                  <select
                     className="w-full p-2 border rounded-lg"
-                    value={formData.preferred_area || ''}
-                    onChange={(e) => handleFieldChange('preferred_area', e.target.value)}
-                    onBlur={() => handleFieldBlur('preferred_area')}
-                    placeholder="Enter preferred area"
-                  />
+                    value={formData.intent || ''}
+                    onChange={(e) => isNewLead ? handleFieldChange('intent', e.target.value) : handleImmediateUpdate('intent', e.target.value)}
+                  >
+                    <option value="">Select Intent</option>
+                    {INTENT.map(intent => (
+                      <option key={intent} value={intent}>{intent}</option>
+                    ))}
+                  </select>
                 </div>
 
-                <div>
+                
+
+                {/* <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Intent</label>
                   <input
                     type="number"
@@ -439,7 +467,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                     onChange={(e) => handleFieldChange('intent', Number(e.target.value))}
                     onBlur={() => handleFieldBlur('intent')}
                   />
-                </div>
+                </div> */}
               </div>
             )}
 
@@ -458,22 +486,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                     ))}
                   </select>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Deal Status</label>
-                  <select
-                    className="w-full p-2 border rounded-lg"
-                    value={formData.deal_status || ''}
-                    onChange={(e) => isNewLead ? handleFieldChange('deal_status', e.target.value) : handleImmediateUpdate('deal_status', e.target.value)}
-                  >
-                    <option value="">Not Set</option>
-                    {DEAL_STATUS.map(status => (
-                      <option key={status} value={status}>{status}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
+<div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Visit Status</label>
                   <select
                     className="w-full p-2 border rounded-lg"
@@ -486,21 +499,6 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                     ))}
                   </select>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">When Buy</label>
-                  <select
-                    className="w-full p-2 border rounded-lg"
-                    value={formData.purchase_timeline || ''}
-                    onChange={(e) => isNewLead ? handleFieldChange('purchase_timeline', e.target.value) : handleImmediateUpdate('purchase_timeline', e.target.value)}
-                  >
-                    <option value="">Not Set</option>
-                    {PURCHASE_TIMELINE.map(timeline => (
-                      <option key={timeline} value={timeline}>{timeline}</option>
-                    ))}
-                  </select>
-                </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Next Action</label>
                   <select
@@ -545,6 +543,22 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                     onBlur={() => handleFieldBlur('note')}
                   />
                 </div>
+
+                {/* <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Deal Status</label>
+                  <select
+                    className="w-full p-2 border rounded-lg"
+                    value={formData.deal_status || ''}
+                    onChange={(e) => isNewLead ? handleFieldChange('deal_status', e.target.value) : handleImmediateUpdate('deal_status', e.target.value)}
+                  >
+                    <option value="">Not Set</option>
+                    {DEAL_STATUS.map(status => (
+                      <option key={status} value={status}>{status}</option>
+                    ))}
+                  </select>
+                </div> */}
+
+                
               </div>
             )}
 
@@ -737,7 +751,6 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                       type="button"
                       onClick={() => setShowDeleteConfirm(true)}
                       className="w-full px-4 py-2 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
-                    
                     >
                       <Trash2 size={20} />
                       Delete Lead

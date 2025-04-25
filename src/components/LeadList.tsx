@@ -13,6 +13,8 @@ import {
   NEXT_ACTIONS, 
   PROPERTY_TYPES, 
   SEGMENTS,
+    INTENT,
+
   TAGS,
   ASSIGNEES,
   SOURCES,

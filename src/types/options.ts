@@ -23,7 +23,7 @@ export const USER_CREDENTIALS: UserCredentials[] = [
 
 // Define default values for new leads
 export const DEFAULT_LEAD_VALUES = {
-  stage: "General Enquiry",
+  stage: "Init - General Enquiry",
   priority: 1, // Low
   next_action: "Take All Details",
   intent: 5,
@@ -35,28 +35,28 @@ export const DEFAULT_LEAD_VALUES = {
 // Define all options as const arrays
 export const LEAD_OPTIONS = {
   STAGES: [
-    "Fresh",
-    "Not Connected Yet",
-    "General Enquiry",
-    "Engaged",
-    "High Engagement",
-    "Waiting for Match",
-    "Match Found",
-    "Visit Planned",
-    "Visit Completed",
-    "Awaiting Decision",
-    "Exploring Other Options",
-    "In Negotiation",
-    "Deal Finalized",
-    "Token Received",
-    "Registry Pending",
-    "Deal Closed",
-    "Low Bids",
-    "Unrealstic Requirement",
-    "Other",
-    "Requirement Closed",
-    "Invalid",
-    "Lost",
+  "Init - Fresh",
+  "Init - Not Connected Yet",
+  "Init - General Enquiry",
+  "Mid - Waiting for Match",
+  "Mid - Options Ready",
+  "Mature - Selected Options",
+  "Mature - Awaiting Decision",
+  "Mature - Exploring Other Options",
+  "Mature - May Finalize",
+  "Deal - In Negotiation",
+  "Deal - Finalized",
+  "Deal - Token Received",
+  "Deal - Registry Pending",
+  "Deal - Deal Closed",
+  "Deal - Commission Pending",
+  "Negative - Low Bids",
+  "Negative - Budget Issue",
+  "Negative - Unrealistic Requirement",
+  "Negative - Requirement Closed",
+  "Negative - Invalid",
+  "Negative - Lost",
+  "Other"
   ],
 
   DEAL_STATUS: [
@@ -110,7 +110,6 @@ export const LEAD_OPTIONS = {
   PROPERTY_TYPES: [
     "Plot Residential",
     "House",
-    "House or Plot",
     "Shop",
     "Colony",
     "Flats",
@@ -122,7 +121,6 @@ export const LEAD_OPTIONS = {
     "Plot Industrial",
     "Other",
     "Any",
-    "Multiple",
   ],
 
   SIZES: [
@@ -147,6 +145,11 @@ export const LEAD_OPTIONS = {
     "Development",
     "Other",
   ],
+    INTENT: [
+    "Hot",
+    "Cold",
+    "Warm",
+  ],
 
   PRIORITIES: [
     { value: 1, label: "Low" },
@@ -154,11 +157,12 @@ export const LEAD_OPTIONS = {
     { value: 3, label: "High" },
   ],
 
-  SEGMENTS: ["Panipat", "Panipat Premium", "Other", "Rohtak"],
+  SEGMENTS: ["Panipat", "Panipat Premium", "Other", "Rohtak", "Projects"],
 
   // New suggestion lists
   TAGS: [
     "Meeting Done",
+    "Need Loan",
     "Hot Lead",
     "VIP",
     "Urgent",
@@ -238,6 +242,7 @@ export const LEAD_STAGES = LEAD_OPTIONS.STAGES;
 export const NEXT_ACTIONS = LEAD_OPTIONS.NEXT_ACTIONS;
 export const PROPERTY_TYPES = LEAD_OPTIONS.PROPERTY_TYPES;
 export const PURPOSES = LEAD_OPTIONS.PURPOSES;
+export const INTENT = LEAD_OPTIONS.INTENT;
 export const PRIORITIES = LEAD_OPTIONS.PRIORITIES;
 export const SEGMENTS = LEAD_OPTIONS.SEGMENTS;
 export const TAGS = LEAD_OPTIONS.TAGS;
@@ -254,7 +259,7 @@ export const PURCHASE_TIMELINE = LEAD_OPTIONS.PURCHASE_TIMELINE;
 // Derive types from the const arrays
 export type LeadStage = (typeof LEAD_OPTIONS.STAGES)[number] | null;
 export type NextAction = (typeof LEAD_OPTIONS.NEXT_ACTIONS)[number] | null;
-export type PropertyType = (typeof LEAD_OPTIONS.PROPERTY_TYPES)[number];
+export type PropertyType = string | null; // Changed to string to support comma-separated values
 export type Purpose = (typeof LEAD_OPTIONS.PURPOSES)[number];
 export type Segment = (typeof LEAD_OPTIONS.SEGMENTS)[number];
 export type Size = (typeof LEAD_OPTIONS.SIZES)[number];

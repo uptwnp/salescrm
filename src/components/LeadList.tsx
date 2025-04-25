@@ -1,20 +1,28 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Search, Settings, LayoutGrid, LayoutList, ArrowUpDown, Filter, IndianRupee, Coins } from 'lucide-react';
-import { Lead } from '../types/lead';
-import { InlineEdit } from './InlineEdit';
-import { LeadForm } from './LeadForm';
-import { LeadFiltersModal } from './LeadFiltersModal';
-import { ColumnCustomization } from './ColumnCustomization';
-import { formatDateTime } from '../utils/dateFormat';
-import { Shimmer, LeadCardShimmer } from './Shimmer';
-import { LeadCard } from './LeadCard';
-import { 
-  LEAD_STAGES, 
-  NEXT_ACTIONS, 
-  PROPERTY_TYPES, 
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Search,
+  Settings,
+  LayoutGrid,
+  LayoutList,
+  ArrowUpDown,
+  Filter,
+  IndianRupee,
+  Coins,
+} from "lucide-react";
+import { Lead } from "../types/lead";
+import { InlineEdit } from "./InlineEdit";
+import { LeadForm } from "./LeadForm";
+import { LeadFiltersModal } from "./LeadFiltersModal";
+import { ColumnCustomization } from "./ColumnCustomization";
+import { formatDateTime } from "../utils/dateFormat";
+import { Shimmer, LeadCardShimmer } from "./Shimmer";
+import { LeadCard } from "./LeadCard";
+import {
+  LEAD_STAGES,
+  NEXT_ACTIONS,
+  PROPERTY_TYPES,
   SEGMENTS,
-    INTENT,
-
+  INTENT,
   TAGS,
   ASSIGNEES,
   SOURCES,
@@ -23,8 +31,8 @@ import {
   PLACEMENTS,
   DEAL_STATUS,
   VISIT_STATUS,
-  PURCHASE_TIMELINE
-} from '../types/options';
+  PURCHASE_TIMELINE,
+} from "../types/options";
 
 interface Column {
   key: keyof Lead;
@@ -37,7 +45,7 @@ interface Column {
 
 interface LeadListProps {
   leads: Lead[];
-  view: 'list' | 'grid';
+  view: "list" | "grid";
   onEdit: (leadId: number, field: keyof Lead, value: any) => void;
   onDelete: (id: number) => Promise<void>;
   isLoading: boolean;
@@ -45,7 +53,7 @@ interface LeadListProps {
   setPage: (page: number) => void;
   totalPages: number;
   sortField: keyof Lead;
-  sortDirection: 'asc' | 'desc';
+  sortDirection: "asc" | "desc";
   onSort: (field: keyof Lead) => void;
   onFiltersChange: (filters: Record<string, string>) => void;
   onTagsChange: (tags: string[]) => void;
@@ -64,57 +72,288 @@ interface LeadListProps {
 
 const DEFAULT_COLUMNS: Column[] = [
   // Primary Information
-  { key: 'id', label: 'ID', visible: true, editable: false, sortable: true, minWidth: 40 },
-  { key: 'name', label: 'Name', visible: true, editable: false, sortable: true, minWidth: 150 },
-  { key: 'phone', label: 'Phone', visible: true, editable: false, sortable: true, minWidth: 120 },
-  { key: 'stage', label: 'Stage', visible: true, editable: true, sortable: true, minWidth: 150 },
-  
+  {
+    key: "id",
+    label: "ID",
+    visible: true,
+    editable: false,
+    sortable: true,
+    minWidth: 40,
+  },
+  {
+    key: "name",
+    label: "Name",
+    visible: true,
+    editable: false,
+    sortable: true,
+    minWidth: 150,
+  },
+  {
+    key: "phone",
+    label: "Phone",
+    visible: true,
+    editable: false,
+    sortable: true,
+    minWidth: 120,
+  },
+  {
+    key: "stage",
+    label: "Stage",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 250,
+  },
+
   // Status Information
-  { key: 'deal_status', label: 'Deal Status', visible: true, editable: true, sortable: true, minWidth: 150 },
-  { key: 'visit_status', label: 'Visit Status', visible: true, editable: true, sortable: true, minWidth: 150 },
-  { key: 'purchase_timeline', label: 'When Buy', visible: true, editable: true, sortable: true, minWidth: 150 },
-  
+  {
+    key: "deal_status",
+    label: "Deal Status",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+  {
+    key: "visit_status",
+    label: "Visit Status",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+  {
+    key: "purchase_timeline",
+    label: "When Buy",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+
   // Follow-up Information
-  { key: 'next_action', label: 'Next Action', visible: true, editable: true, sortable: true, minWidth: 180 },
-  { key: 'next_action_time', label: 'Next Action Time', visible: true, editable: true, sortable: true, minWidth: 150 },
-  { key: 'next_action_note', label: 'Action Notes', visible: false, editable: true, sortable: false, minWidth: 200 },
-  
+  {
+    key: "next_action",
+    label: "Next Action",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 180,
+  },
+  {
+    key: "next_action_time",
+    label: "Next Action Time",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+  {
+    key: "next_action_note",
+    label: "Action Notes",
+    visible: false,
+    editable: true,
+    sortable: false,
+    minWidth: 200,
+  },
+
   // Requirements
-  { key: 'requirement_description', label: 'Requirement', visible: true, editable: true, sortable: false, minWidth: 300 },
-  { key: 'budget', label: 'Budget (L)', visible: true, editable: true, sortable: true, minWidth: 120 },
-  { key: 'preferred_type', label: 'Property Type', visible: true, editable: true, sortable: true, minWidth: 150 },
-  { key: 'preferred_area', label: 'Area', visible: false, editable: true, sortable: true, minWidth: 150 },
-  { key: 'purposes', label: 'Purpose', visible: false, editable: true, sortable: true, minWidth: 120 },
-  
+  {
+    key: "requirement_description",
+    label: "Requirement",
+    visible: true,
+    editable: true,
+    sortable: false,
+    minWidth: 300,
+  },
+  {
+    key: "budget",
+    label: "Budget (L)",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 120,
+  },
+  {
+    key: "preferred_type",
+    label: "Property Type",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+  {
+    key: "preferred_area",
+    label: "Area",
+    visible: false,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+  {
+    key: "purposes",
+    label: "Purpose",
+    visible: false,
+    editable: true,
+    sortable: true,
+    minWidth: 120,
+  },
+
   // Classification
-  { key: 'segment', label: 'Segment', visible: true, editable: true, sortable: true, minWidth: 120 },
-  { key: 'priority', label: 'Priority', visible: true, editable: true, sortable: true, minWidth: 100 },
-  { key: 'intent', label: 'Intent', visible: true, editable: true, sortable: true, minWidth: 80 },
-  { key: 'tags', label: 'Tags', visible: true, editable: true, sortable: false, minWidth: 200 },
-  
+  {
+    key: "segment",
+    label: "Segment",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 120,
+  },
+  {
+    key: "priority",
+    label: "Priority",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 100,
+  },
+  {
+    key: "intent",
+    label: "Intent",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 80,
+  },
+  {
+    key: "tags",
+    label: "Tags",
+    visible: true,
+    editable: true,
+    sortable: false,
+    minWidth: 200,
+  },
+
   // Source Information
-  { key: 'source', label: 'Source', visible: true, editable: true, sortable: true, minWidth: 150 },
-  { key: 'medium', label: 'Medium', visible: true, editable: true, sortable: true, minWidth: 120 },
-  { key: 'placement', label: 'Placement', visible: false, editable: true, sortable: true, minWidth: 150 },
-  
+  {
+    key: "source",
+    label: "Source",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+  {
+    key: "medium",
+    label: "Medium",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 120,
+  },
+  {
+    key: "placement",
+    label: "Placement",
+    visible: false,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+
   // Assignment & Lists
-  { key: 'assigned_to', label: 'Assigned To', visible: true, editable: true, sortable: true, minWidth: 150 },
-  { key: 'list_name', label: 'Lists', visible: true, editable: true, sortable: true, minWidth: 150 },
-  
+  {
+    key: "assigned_to",
+    label: "Assigned To",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+  {
+    key: "list_name",
+    label: "Lists",
+    visible: true,
+    editable: true,
+    sortable: true,
+    minWidth: 150,
+  },
+
   // Additional Contact
-  { key: 'alternative_contact_details', label: 'Alt. Contact', visible: false, editable: true, sortable: false, minWidth: 150 },
-  { key: 'address', label: 'Address', visible: false, editable: true, sortable: false, minWidth: 200 },
-  { key: 'about_him', label: 'About Person', visible: false, editable: true, sortable: false, minWidth: 200 },
-  
+  {
+    key: "alternative_contact_details",
+    label: "Alt. Contact",
+    visible: false,
+    editable: true,
+    sortable: false,
+    minWidth: 150,
+  },
+  {
+    key: "address",
+    label: "Address",
+    visible: false,
+    editable: true,
+    sortable: false,
+    minWidth: 200,
+  },
+  {
+    key: "about_him",
+    label: "About Person",
+    visible: false,
+    editable: true,
+    sortable: false,
+    minWidth: 200,
+  },
+
   // Notes & Custom Fields
-  { key: 'note', label: 'Notes', visible: false, editable: true, sortable: false, minWidth: 300 },
-  { key: 'data_1', label: 'Custom Field 1', visible: false, editable: true, sortable: false, minWidth: 150 },
-  { key: 'data_2', label: 'Custom Field 2', visible: false, editable: true, sortable: false, minWidth: 150 },
-  { key: 'data_3', label: 'Custom Field 3', visible: false, editable: true, sortable: false, minWidth: 150 },
-  
+  {
+    key: "note",
+    label: "Notes",
+    visible: false,
+    editable: true,
+    sortable: false,
+    minWidth: 300,
+  },
+  {
+    key: "data_1",
+    label: "Custom Field 1",
+    visible: false,
+    editable: true,
+    sortable: false,
+    minWidth: 150,
+  },
+  {
+    key: "data_2",
+    label: "Custom Field 2",
+    visible: false,
+    editable: true,
+    sortable: false,
+    minWidth: 150,
+  },
+  {
+    key: "data_3",
+    label: "Custom Field 3",
+    visible: false,
+    editable: true,
+    sortable: false,
+    minWidth: 150,
+  },
+
   // System Fields
-  { key: 'created_at', label: 'Created At', visible: false, editable: false, sortable: true, minWidth: 150 },
-  { key: 'updated_at', label: 'Updated At', visible: false, editable: false, sortable: true, minWidth: 150 }
+  {
+    key: "created_at",
+    label: "Created At",
+    visible: false,
+    editable: false,
+    sortable: true,
+    minWidth: 150,
+  },
+  {
+    key: "updated_at",
+    label: "Updated At",
+    visible: false,
+    editable: false,
+    sortable: true,
+    minWidth: 150,
+  },
 ];
 
 export const LeadList: React.FC<LeadListProps> = ({
@@ -141,28 +380,34 @@ export const LeadList: React.FC<LeadListProps> = ({
   perPage,
   totalResults,
   onLeadSelect,
-  isAdmin
+  isAdmin,
 }) => {
   const tableContainerRef = useRef<HTMLDivElement>(null);
-  
+
   const [columns, setColumns] = useState<Column[]>(() => {
-    const savedColumns = localStorage.getItem('leadColumnsVisibility');
+    const savedColumns = localStorage.getItem("leadColumnsVisibility");
     if (savedColumns) {
       const parsedColumns = JSON.parse(savedColumns);
-      return DEFAULT_COLUMNS.map(defaultCol => ({
+      return DEFAULT_COLUMNS.map((defaultCol) => ({
         ...defaultCol,
-        visible: parsedColumns[defaultCol.key] ?? defaultCol.visible
+        visible: parsedColumns[defaultCol.key] ?? defaultCol.visible,
       }));
     }
     return DEFAULT_COLUMNS;
   });
 
   useEffect(() => {
-    const visibilityState = columns.reduce((acc, col) => ({
-      ...acc,
-      [col.key]: col.visible
-    }), {});
-    localStorage.setItem('leadColumnsVisibility', JSON.stringify(visibilityState));
+    const visibilityState = columns.reduce(
+      (acc, col) => ({
+        ...acc,
+        [col.key]: col.visible,
+      }),
+      {}
+    );
+    localStorage.setItem(
+      "leadColumnsVisibility",
+      JSON.stringify(visibilityState)
+    );
   }, [columns]);
 
   const handleColumnChange = (newColumns: Column[]) => {
@@ -171,77 +416,83 @@ export const LeadList: React.FC<LeadListProps> = ({
 
   const getFieldOptions = (column: Column): string[] => {
     switch (column.key) {
-      case 'stage':
+      case "stage":
         return LEAD_STAGES;
-      case 'next_action':
+      case "next_action":
         return NEXT_ACTIONS;
-      case 'preferred_type':
+      case "preferred_type":
         return PROPERTY_TYPES;
-      case 'segment':
+      case "segment":
         return SEGMENTS;
-      case 'tags':
+      case "tags":
         return TAGS;
-      case 'assigned_to':
+      case "assigned_to":
         return ASSIGNEES;
-      case 'source':
+      case "source":
         return SOURCES;
-      case 'medium':
+      case "medium":
         return MEDIUMS;
-      case 'list_name':
+      case "list_name":
         return LISTS;
-      case 'placement':
+      case "placement":
         return PLACEMENTS;
-      case 'deal_status':
+      case "deal_status":
         return DEAL_STATUS;
-      case 'visit_status':
+      case "visit_status":
         return VISIT_STATUS;
-      case 'purchase_timeline':
+      case "purchase_timeline":
         return PURCHASE_TIMELINE;
       default:
         return [];
     }
   };
 
-  const getFieldType = (column: Column): 'text' | 'number' | 'select' | 'datetime' | 'tags' => {
+  const getFieldType = (
+    column: Column
+  ): "text" | "number" | "select" | "datetime" | "tags" => {
     switch (column.key) {
-      case 'stage':
-      case 'next_action':
-      case 'segment':
-      case 'preferred_type':
-      case 'purposes':
-      case 'medium':
-      case 'deal_status':
-      case 'visit_status':
-      case 'purchase_timeline':
-        return 'select';
-      case 'tags':
-      case 'assigned_to':
-      case 'source':
-      case 'list_name':
-        return 'tags';
-      case 'next_action_time':
-      case 'created_at':
-      case 'updated_at':
-        return 'datetime';
-      case 'budget':
-      case 'intent':
-      case 'priority':
-        return 'number';
+      case "stage":
+      case "next_action":
+      case "segment":
+      case "preferred_type":
+      case "purposes":
+      case "medium":
+      case "deal_status":
+      case "visit_status":
+      case "purchase_timeline":
+        return "select";
+      case "tags":
+      case "assigned_to":
+      case "source":
+      case "list_name":
+        return "tags";
+      case "next_action_time":
+      case "created_at":
+      case "updated_at":
+        return "datetime";
+      case "budget":
+      case "intent":
+      case "priority":
+        return "number";
       default:
-        return 'text';
+        return "text";
     }
   };
 
   const formatValue = (value: any, column: Column): React.ReactNode => {
-    if (value === null || value === undefined || value === '') {
+    if (value === null || value === undefined || value === "") {
       return <span className="text-gray-400">-</span>;
     }
-    
-    if (column.key === 'next_action_time' || column.key === 'created_at' || column.key === 'updated_at') {
+
+    if (
+      column.key === "next_action_time" ||
+      column.key === "created_at" ||
+      column.key === "updated_at"
+    ) {
       return formatDateTime(value);
     }
-    
-    if (column.key === 'budget') {
+
+    if (column.key === "budget") {
       return (
         <div className="flex items-center gap-1">
           <IndianRupee size={14} className="text-emerald-600" />
@@ -250,17 +501,29 @@ export const LeadList: React.FC<LeadListProps> = ({
         </div>
       );
     }
-    
-    if (column.key === 'priority') {
-      const priorities = { 1: 'Low', 2: 'Medium', 3: 'High' };
-      const colors = { 1: 'text-blue-600', 2: 'text-orange-600', 3: 'text-red-600' };
-      return <span className={colors[value as keyof typeof colors]}>{priorities[value as keyof typeof priorities]}</span>;
+
+    if (column.key === "priority") {
+      const priorities = { 1: "Low", 2: "Medium", 3: "High" };
+      const colors = {
+        1: "text-blue-600",
+        2: "text-orange-600",
+        3: "text-red-600",
+      };
+      return (
+        <span className={colors[value as keyof typeof colors]}>
+          {priorities[value as keyof typeof priorities]}
+        </span>
+      );
     }
 
-    if (column.key === 'tags' || column.key === 'assigned_to' || column.key === 'list_name') {
+    if (
+      column.key === "tags" ||
+      column.key === "assigned_to" ||
+      column.key === "list_name"
+    ) {
       return (
         <div className="flex flex-wrap gap-1">
-          {value.split(',').map((tag: string, index: number) => (
+          {value.split(",").map((tag: string, index: number) => (
             <span
               key={index}
               className="text-xs px-2 py-0.5 bg-orange-50 text-orange-600 rounded-full"
@@ -271,7 +534,7 @@ export const LeadList: React.FC<LeadListProps> = ({
         </div>
       );
     }
-    
+
     return value.toString();
   };
 
@@ -283,10 +546,14 @@ export const LeadList: React.FC<LeadListProps> = ({
 
   const getSortIcon = (column: Column) => {
     if (!column.sortable) return null;
-    
+
     if (sortField === column.key) {
       return (
-        <span className={`ml-1 inline-block transition-transform ${sortDirection === 'desc' ? 'rotate-180' : ''}`}>
+        <span
+          className={`ml-1 inline-block transition-transform ${
+            sortDirection === "desc" ? "rotate-180" : ""
+          }`}
+        >
           ↑
         </span>
       );
@@ -297,9 +564,9 @@ export const LeadList: React.FC<LeadListProps> = ({
   const handleRowClick = (e: React.MouseEvent, lead: Lead) => {
     const target = e.target as HTMLElement;
     if (
-      target.tagName.toLowerCase() === 'input' ||
-      target.tagName.toLowerCase() === 'button' ||
-      target.closest('.inline-edit')
+      target.tagName.toLowerCase() === "input" ||
+      target.tagName.toLowerCase() === "button" ||
+      target.closest(".inline-edit")
     ) {
       return;
     }
@@ -335,17 +602,21 @@ export const LeadList: React.FC<LeadListProps> = ({
     let l;
 
     for (let i = 1; i <= totalPages; i++) {
-      if (i === 1 || i === totalPages || (i >= page - delta && i <= page + delta)) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= page - delta && i <= page + delta)
+      ) {
         range.push(i);
       }
     }
 
-    range.forEach(i => {
+    range.forEach((i) => {
       if (l) {
         if (i - l === 2) {
           rangeWithDots.push(l + 1);
         } else if (i - l !== 1) {
-          rangeWithDots.push('...');
+          rangeWithDots.push("...");
         }
       }
       rangeWithDots.push(i);
@@ -363,79 +634,106 @@ export const LeadList: React.FC<LeadListProps> = ({
         </div>
       ) : (
         <div className="flex-1 overflow-hidden">
-          {view === 'grid' ? (
-            <div className="h-full overflow-y-auto">
-              {renderGridView()}
-            </div>
+          {view === "grid" ? (
+            <div className="h-full overflow-y-auto">{renderGridView()}</div>
           ) : (
             <div ref={tableContainerRef} className="h-full overflow-y-auto">
               <div className="rounded-lg overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50 sticky top-0 z-10">
                     <tr>
-                      {columns.filter(col => col.visible).map(column => (
-                        <th
-                          key={column.key}
-                          onClick={() => handleSort(column)}
-                          className={`px-4 py-3 text-left text-sm font-medium text-gray-500 ${
-                            column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''
-                          }`}
-                          style={{ minWidth: column.minWidth }}
-                        >
-                          <div className="flex items-center">
-                            {column.label}
-                            {getSortIcon(column)}
-                          </div>
-                        </th>
-                      ))}
+                      {columns
+                        .filter((col) => col.visible)
+                        .map((column) => (
+                          <th
+                            key={column.key}
+                            onClick={() => handleSort(column)}
+                            className={`px-4 py-3 text-left text-sm font-medium text-gray-500 ${
+                              column.sortable
+                                ? "cursor-pointer hover:bg-gray-100"
+                                : ""
+                            }`}
+                            style={{ minWidth: column.minWidth }}
+                          >
+                            <div className="flex items-center">
+                              {column.label}
+                              {getSortIcon(column)}
+                            </div>
+                          </th>
+                        ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {isLoading ? (
                       Array.from({ length: 5 }).map((_, index) => (
                         <tr key={index}>
-                          {columns.filter(col => col.visible).map((column, colIndex) => (
-                            <td key={colIndex} className="px-4 py-3">
-                              <Shimmer className="h-6 rounded" />
-                            </td>
-                          ))}
+                          {columns
+                            .filter((col) => col.visible)
+                            .map((column, colIndex) => (
+                              <td key={colIndex} className="px-4 py-3">
+                                <Shimmer className="h-6 rounded" />
+                              </td>
+                            ))}
                         </tr>
                       ))
                     ) : leads.length === 0 ? (
                       <tr>
-                        <td colSpan={columns.filter(col => col.visible).length} className="px-4 py-4 text-center text-gray-500">
+                        <td
+                          colSpan={columns.filter((col) => col.visible).length}
+                          className="px-4 py-4 text-center text-gray-500"
+                        >
                           No leads found
                         </td>
                       </tr>
                     ) : (
                       leads.map((lead) => (
-                        <tr 
-                          key={lead.id} 
+                        <tr
+                          key={lead.id}
                           className="hover:bg-gray-50 cursor-pointer transition-colors"
                           onClick={(e) => handleRowClick(e, lead)}
                         >
-                          {columns.filter(col => col.visible).map(column => (
-                            <td key={column.key} className="px-4 py-3 whitespace-normal">
-                              {column.editable && (isAdmin || column.key !== 'stage') ? (
-                                <div className="inline-edit min-w-[150px]">
-                                  <InlineEdit
-                                    value={lead[column.key]}
-                                    onSave={(value) => onEdit(lead.id, column.key, value)}
-                                    type={getFieldType(column)}
-                                    options={getFieldOptions(column)}
-                                    className={column.key === 'requirement_description' || column.key === 'note' ? 'line-clamp-2' : ''}
-                                    placeholder={`-`}
-                                  />
-                                </div>
-                              ) : (
-                                <div className={`text-sm text-gray-900 ${
-                                  column.key === 'requirement_description' || column.key === 'note' ? 'line-clamp-2' : ''
-                                }`}>
-                                  {formatValue(lead[column.key], column)}
-                                </div>
-                              )}
-                            </td>
-                          ))}
+                          {columns
+                            .filter((col) => col.visible)
+                            .map((column) => (
+                              <td
+                                key={column.key}
+                                className="px-4 py-3 whitespace-normal"
+                              >
+                                {column.editable &&
+                                (isAdmin || column.key !== "stage") ? (
+                                  <div className="inline-edit min-w-[150px]">
+                                    <InlineEdit
+                                      value={lead[column.key]}
+                                      onSave={(value) =>
+                                        onEdit(lead.id, column.key, value)
+                                      }
+                                      type={getFieldType(column)}
+                                      options={getFieldOptions(column)}
+                                      className={
+                                        column.key ===
+                                          "requirement_description" ||
+                                        column.key === "note"
+                                          ? "line-clamp-2"
+                                          : ""
+                                      }
+                                      placeholder={`-`}
+                                    />
+                                  </div>
+                                ) : (
+                                  <div
+                                    className={`text-sm text-gray-900 ${
+                                      column.key ===
+                                        "requirement_description" ||
+                                      column.key === "note"
+                                        ? "line-clamp-2"
+                                        : ""
+                                    }`}
+                                  >
+                                    {formatValue(lead[column.key], column)}
+                                  </div>
+                                )}
+                              </td>
+                            ))}
                         </tr>
                       ))
                     )}
@@ -450,7 +748,7 @@ export const LeadList: React.FC<LeadListProps> = ({
       <div className="border-t border-gray-200 px-4 py-3 bg-white mb-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="text-sm text-gray-700">
-            Showing <span className="font-medium">{leads.length}</span> of{' '}
+            Showing <span className="font-medium">{leads.length}</span> of{" "}
             <span className="font-medium">{totalResults}</span> leads
           </div>
           <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px pagination-container">
@@ -468,8 +766,8 @@ export const LeadList: React.FC<LeadListProps> = ({
             >
               Previous
             </button>
-            {getVisiblePages().map((pageNum, index) => (
-              pageNum === '...' ? (
+            {getVisiblePages().map((pageNum, index) =>
+              pageNum === "..." ? (
                 <span
                   key={`ellipsis-${index}`}
                   className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700"
@@ -482,14 +780,14 @@ export const LeadList: React.FC<LeadListProps> = ({
                   onClick={() => setPage(pageNum as number)}
                   className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                     page === pageNum
-                      ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                      ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
+                      : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                   }`}
                 >
                   {pageNum}
                 </button>
               )
-            ))}
+            )}
             <button
               onClick={() => setPage(page < totalPages ? page + 1 : totalPages)}
               disabled={page === totalPages}

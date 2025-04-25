@@ -18,7 +18,10 @@ import {
   SOURCES,
   MEDIUMS,
   LISTS,
-  PLACEMENTS 
+  PLACEMENTS,
+  DEAL_STATUS,
+  VISIT_STATUS,
+  PURCHASE_TIMELINE
 } from '../types/options';
 
 interface Column {
@@ -63,6 +66,11 @@ const DEFAULT_COLUMNS: Column[] = [
   { key: 'name', label: 'Name', visible: true, editable: false, sortable: true, minWidth: 150 },
   { key: 'phone', label: 'Phone', visible: true, editable: false, sortable: true, minWidth: 120 },
   { key: 'stage', label: 'Stage', visible: true, editable: true, sortable: true, minWidth: 150 },
+  
+  // Status Information
+  { key: 'deal_status', label: 'Deal Status', visible: true, editable: true, sortable: true, minWidth: 150 },
+  { key: 'visit_status', label: 'Visit Status', visible: true, editable: true, sortable: true, minWidth: 150 },
+  { key: 'purchase_timeline', label: 'When Buy', visible: true, editable: true, sortable: true, minWidth: 150 },
   
   // Follow-up Information
   { key: 'next_action', label: 'Next Action', visible: true, editable: true, sortable: true, minWidth: 180 },
@@ -135,12 +143,10 @@ export const LeadList: React.FC<LeadListProps> = ({
 }) => {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   
-  // Initialize columns from localStorage or use defaults
   const [columns, setColumns] = useState<Column[]>(() => {
     const savedColumns = localStorage.getItem('leadColumnsVisibility');
     if (savedColumns) {
       const parsedColumns = JSON.parse(savedColumns);
-      // Merge saved visibility with default columns to ensure all properties are present
       return DEFAULT_COLUMNS.map(defaultCol => ({
         ...defaultCol,
         visible: parsedColumns[defaultCol.key] ?? defaultCol.visible
@@ -149,7 +155,6 @@ export const LeadList: React.FC<LeadListProps> = ({
     return DEFAULT_COLUMNS;
   });
 
-  // Save column visibility to localStorage whenever it changes
   useEffect(() => {
     const visibilityState = columns.reduce((acc, col) => ({
       ...acc,
@@ -184,6 +189,12 @@ export const LeadList: React.FC<LeadListProps> = ({
         return LISTS;
       case 'placement':
         return PLACEMENTS;
+      case 'deal_status':
+        return DEAL_STATUS;
+      case 'visit_status':
+        return VISIT_STATUS;
+      case 'purchase_timeline':
+        return PURCHASE_TIMELINE;
       default:
         return [];
     }
@@ -197,6 +208,9 @@ export const LeadList: React.FC<LeadListProps> = ({
       case 'preferred_type':
       case 'purposes':
       case 'medium':
+      case 'deal_status':
+      case 'visit_status':
+      case 'purchase_timeline':
         return 'select';
       case 'tags':
       case 'assigned_to':

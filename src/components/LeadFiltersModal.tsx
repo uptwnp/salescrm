@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { LEAD_STAGES, NEXT_ACTIONS, PROPERTY_TYPES, PRIORITIES, SEGMENTS, PURPOSES, ASSIGNEES, SIZES, TAGS } from '../types/options';
+import { LEAD_STAGES, NEXT_ACTIONS, PROPERTY_TYPES, PRIORITIES, SEGMENTS, PURPOSES, ASSIGNEES, SIZES, TAGS, DEAL_STATUS, VISIT_STATUS, PURCHASE_TIMELINE } from '../types/options';
 import { FilterState } from '../types/filters';
 import { TagInput } from './TagInput';
 
@@ -49,6 +49,9 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
     assigned_to: currentFilters.assigned_to || '',
     show_all: currentFilters.show_all || '',
     size: currentFilters.size || '',
+    deal_status: currentFilters.deal_status || '',
+    visit_status: currentFilters.visit_status || '',
+    purchase_timeline: currentFilters.purchase_timeline || '',
     tags: currentTags
   });
 
@@ -92,10 +95,13 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
       assigned_to: '',
       show_all: '',
       size: '',
+      deal_status: '',
+      visit_status: '',
+      purchase_timeline: '',
       tags: []
     };
     setFilters(emptyFilters);
-    onFiltersChange({});
+    onFiltersChange(isAdmin ? {} : { assigned_to: filters.assigned_to });
     onTagsChange([]);
     onClose();
   };
@@ -267,21 +273,58 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
               </select>
             </div>
 
-            {isAdmin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
-                <select
-                  className="w-full p-2 border rounded-lg"
-                  value={filters.assigned_to}
-                  onChange={(e) => setFilters({ ...filters, assigned_to: e.target.value })}
-                >
-                  <option value="">All Assignees</option>
-                  {ASSIGNEES.map(assignee => (
-                    <option key={assignee} value={assignee}>{assignee}</option>
-                  ))}
-                </select>
-              </div>
-            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Deal Status</label>
+              <select
+                className="w-full p-2 border rounded-lg"
+                value={filters.deal_status}
+                onChange={(e) => setFilters({ ...filters, deal_status: e.target.value })}
+              >
+                <option value="">All Deal Status</option>
+                {DEAL_STATUS.map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Visit Status</label>
+              <select
+                className="w-full p-2 border rounded-lg"
+                value={filters.visit_status}
+                onChange={(e) => setFilters({ ...filters, visit_status: e.target.value })}
+              >
+                <option value="">All Visit Status</option>
+                {VISIT_STATUS.map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">When Buy</label>
+              <select
+                className="w-full p-2 border rounded-lg"
+                value={filters.purchase_timeline}
+                onChange={(e) => setFilters({ ...filters, purchase_timeline: e.target.value })}
+              >
+                <option value="">All Purchase Timelines</option>
+                {PURCHASE_TIMELINE.map(timeline => (
+                  <option key={timeline} value={timeline}>{timeline}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
+              <TagInput
+                value={(filters.assigned_to || '').split(',').filter(Boolean)}
+                onChange={(values) => setFilters({ ...filters, assigned_to: values.join(',') })}
+                suggestions={ASSIGNEES}
+                allowCustom={false}
+                placeholder="Select assignees..."
+              />
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>

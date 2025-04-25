@@ -374,9 +374,6 @@ function App() {
   };
 
   const handleFilterRemove = (key: string) => {
-    if (!isAdmin && key === 'assigned_to') {
-      return; // Prevent removing assigned_to filter for non-admin users
-    }
     const newFilters = { ...filters };
     delete newFilters[key];
     setFilters(newFilters);
@@ -384,10 +381,12 @@ function App() {
   };
 
   const handleClearFilters = () => {
-    if (isAdmin) {
-      setFilters({});
-    } else {
+    // For non-admin users, preserve their assigned_to filter
+    if (!isAdmin) {
       setFilters({ assigned_to: loggedInUser || '' });
+    } else {
+      // For admin users, clear all filters
+      setFilters({});
     }
     setTags([]);
     setPage(1);

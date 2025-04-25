@@ -19,7 +19,10 @@ import {
   LISTS,
   PLACEMENTS,
   DEFAULT_LEAD_VALUES,
-  SIZES 
+  SIZES,
+  DEAL_STATUS,
+  VISIT_STATUS,
+  PURCHASE_TIMELINE
 } from '../types/options';
 
 interface LeadFormProps {
@@ -457,6 +460,48 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                 </div>
 
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Deal Status</label>
+                  <select
+                    className="w-full p-2 border rounded-lg"
+                    value={formData.deal_status || ''}
+                    onChange={(e) => isNewLead ? handleFieldChange('deal_status', e.target.value) : handleImmediateUpdate('deal_status', e.target.value)}
+                  >
+                    <option value="">Not Set</option>
+                    {DEAL_STATUS.map(status => (
+                      <option key={status} value={status}>{status}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Visit Status</label>
+                  <select
+                    className="w-full p-2 border rounded-lg"
+                    value={formData.visit_status || ''}
+                    onChange={(e) => isNewLead ? handleFieldChange('visit_status', e.target.value) : handleImmediateUpdate('visit_status', e.target.value)}
+                  >
+                    <option value="">Not Set</option>
+                    {VISIT_STATUS.map(status => (
+                      <option key={status} value={status}>{status}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">When Buy</label>
+                  <select
+                    className="w-full p-2 border rounded-lg"
+                    value={formData.purchase_timeline || ''}
+                    onChange={(e) => isNewLead ? handleFieldChange('purchase_timeline', e.target.value) : handleImmediateUpdate('purchase_timeline', e.target.value)}
+                  >
+                    <option value="">Not Set</option>
+                    {PURCHASE_TIMELINE.map(timeline => (
+                      <option key={timeline} value={timeline}>{timeline}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Next Action</label>
                   <select
                     className="w-full p-2 border rounded-lg"
@@ -692,6 +737,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                       type="button"
                       onClick={() => setShowDeleteConfirm(true)}
                       className="w-full px-4 py-2 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                    
                     >
                       <Trash2 size={20} />
                       Delete Lead

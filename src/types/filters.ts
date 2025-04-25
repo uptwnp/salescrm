@@ -13,6 +13,9 @@ export interface FilterState {
   assigned_to?: string;
   show_all?: string;
   size?: string;
+  deal_status?: string;
+  visit_status?: string;
+  purchase_timeline?: string;
   tags?: string[];
 }
 

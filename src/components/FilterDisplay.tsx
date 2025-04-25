@@ -34,14 +34,12 @@ export const FilterDisplay: React.FC<FilterDisplayProps> = ({
 }) => {
   const hasFilters = Object.entries(filters).some(([key, value]) => 
     value !== undefined && value !== null && 
-    (Array.isArray(value) ? value.length > 0 : value !== '') &&
-    (isAdmin || key !== 'assigned_to')
+    (Array.isArray(value) ? value.length > 0 : value !== '')
   );
 
   const hasRemovableFilters = Object.entries(filters).some(([key, value]) => 
     value !== undefined && value !== null && 
-    (Array.isArray(value) ? value.length > 0 : value !== '') &&
-    (isAdmin || key !== 'assigned_to')
+    (Array.isArray(value) ? value.length > 0 : value !== '')
   );
 
   if (!hasFilters) return null;
@@ -49,8 +47,6 @@ export const FilterDisplay: React.FC<FilterDisplayProps> = ({
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
       {Object.entries(filters).map(([key, value]) => {
-        // Skip rendering assigned_to filter for non-admin users
-        if (!isAdmin && key === 'assigned_to') return null;
         if (!value || (Array.isArray(value) && value.length === 0) || key === 'custom_date') return null;
         
         return (
@@ -67,8 +63,7 @@ export const FilterDisplay: React.FC<FilterDisplayProps> = ({
           </div>
         );
       })}
-      {/* Only show clear filters button for admin users and when there are removable filters */}
-      {isAdmin && hasRemovableFilters && (
+      {hasRemovableFilters && (
         <button
           onClick={onClearFilters}
           className="text-gray-600 hover:text-gray-900 text-sm"

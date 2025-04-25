@@ -7,6 +7,7 @@ interface TagInputProps {
   suggestions?: string[];
   allowCustom?: boolean;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export const TagInput: React.FC<TagInputProps> = ({
@@ -14,7 +15,8 @@ export const TagInput: React.FC<TagInputProps> = ({
   onChange,
   suggestions = [],
   allowCustom = false,
-  placeholder = 'Add...'
+  placeholder = 'Add...',
+  disabled = false
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -43,11 +45,13 @@ export const TagInput: React.FC<TagInputProps> = ({
   }, [inputValue, suggestions, value]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
     setInputValue(e.target.value);
     setIsOpen(true);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (disabled) return;
     if (e.key === 'Enter' && inputValue) {
       e.preventDefault();
       if (allowCustom || suggestions.includes(inputValue)) {
@@ -59,6 +63,7 @@ export const TagInput: React.FC<TagInputProps> = ({
   };
 
   const addTag = (tag: string) => {
+    if (disabled) return;
     if (!value.includes(tag)) {
       onChange([...value, tag]);
     }
@@ -67,46 +72,55 @@ export const TagInput: React.FC<TagInputProps> = ({
   };
 
   const removeTag = (tag: string) => {
+    if (disabled) return;
     onChange(value.filter(t => t !== tag));
   };
 
   return (
     <div className="relative">
       <div
-        className="min-h-[42px] p-1 border rounded-lg flex flex-wrap gap-1 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow"
-        onClick={() => inputRef.current?.focus()}
+        className={`min-h-[42px] p-1 border rounded-lg flex flex-wrap gap-1 focus-within:ring-2 focus-within:ring-blue-500 transition-shadow ${
+          disabled ? 'bg-gray-50 cursor-not-allowed' : ''
+        }`}
+        onClick={() => !disabled && inputRef.current?.focus()}
       >
         {value.map((tag, index) => (
           <span
             key={index}
-            className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-sm"
+            className={`inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-sm ${
+              disabled ? 'opacity-70' : ''
+            }`}
           >
             {tag}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                removeTag(tag);
-              }}
-              className="hover:bg-blue-100 rounded-full p-0.5"
-            >
-              <X size={14} />
-            </button>
+            {!disabled && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeTag(tag);
+                }}
+                className="hover:bg-blue-100 rounded-full p-0.5"
+              >
+                <X size={14} />
+              </button>
+            )}
           </span>
         ))}
-        <input
-          ref={inputRef}
-          type="text"
-          className="flex-1 min-w-[120px] p-1 outline-none bg-transparent"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={() => setIsOpen(true)}
-          placeholder={value.length === 0 ? placeholder : ''}
-        />
+        {!disabled && (
+          <input
+            ref={inputRef}
+            type="text"
+            className="flex-1 min-w-[120px] p-1 outline-none bg-transparent"
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsOpen(true)}
+            placeholder={value.length === 0 ? placeholder : ''}
+          />
+        )}
       </div>
       
-      {isOpen && (filteredSuggestions.length > 0 || (allowCustom && inputValue)) && (
+      {!disabled && isOpen && (filteredSuggestions.length > 0 || (allowCustom && inputValue)) && (
         <div
           ref={dropdownRef}
           className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-48 overflow-y-auto"

@@ -59,6 +59,38 @@ export const LEAD_OPTIONS = {
     "Lost",
   ],
 
+  DEAL_STATUS: [
+    "May Finalize",
+    "Finalized",
+    "Low Bids",
+    "In Negotiation",
+    "Token Received",
+    "Budget Issue",
+    "Registry Pending",
+    "Deal Closed",
+    "Commission Pending",
+  ],
+
+  VISIT_STATUS: [
+    "Want Option First",
+    "Want Visit",
+    "Visit Scheduled",
+    "Meeting Done",
+    "Met Multiple Times",
+  ],
+
+  PURCHASE_TIMELINE: [
+    "Within 15 Days",
+    "Within 1 Month",
+    "Within 3 Month",
+    "After Sale",
+    "Within 1 Year",
+    "Not Specified",
+    "ASAP",
+    "After Some Event",
+    "Instantly",
+  ],
+
   NEXT_ACTIONS: [
     "Take All Details",
     "Find Match",
@@ -186,16 +218,18 @@ export const LEAD_OPTIONS = {
   ],
 
   ASSIGNEES: [
-    "Ygs",
-    "Rinku Modal Town",
-    "Sharvan",
-    "Narender",
-    "Parmod",
     "Yogesh",
     "Mohit",
+    "Sharvan",
+    "Parmod",
+    "Telecaller",
+    "Other",
+    "Rinku Modal Town",
+    "Narender",
     "Uptown Team",
     "Deepak",
     "Komal",
+    "Ygs",
   ],
 } as const;
 
@@ -213,6 +247,9 @@ export const LISTS = LEAD_OPTIONS.LISTS;
 export const PLACEMENTS = LEAD_OPTIONS.PLACEMENTS;
 export const ASSIGNEES = LEAD_OPTIONS.ASSIGNEES;
 export const SIZES = LEAD_OPTIONS.SIZES;
+export const DEAL_STATUS = LEAD_OPTIONS.DEAL_STATUS;
+export const VISIT_STATUS = LEAD_OPTIONS.VISIT_STATUS;
+export const PURCHASE_TIMELINE = LEAD_OPTIONS.PURCHASE_TIMELINE;
 
 // Derive types from the const arrays
 export type LeadStage = (typeof LEAD_OPTIONS.STAGES)[number] | null;
@@ -221,6 +258,9 @@ export type PropertyType = (typeof LEAD_OPTIONS.PROPERTY_TYPES)[number];
 export type Purpose = (typeof LEAD_OPTIONS.PURPOSES)[number];
 export type Segment = (typeof LEAD_OPTIONS.SEGMENTS)[number];
 export type Size = (typeof LEAD_OPTIONS.SIZES)[number];
+export type DealStatus = (typeof LEAD_OPTIONS.DEAL_STATUS)[number] | null;
+export type VisitStatus = (typeof LEAD_OPTIONS.VISIT_STATUS)[number] | null;
+export type PurchaseTimeline = (typeof LEAD_OPTIONS.PURCHASE_TIMELINE)[number] | null;
 
 // Export the Lead interface here since it's closely related to the options
 export interface Lead {
@@ -258,6 +298,9 @@ export interface Lead {
   created_at: string;
   updated_at: string;
   hidden?: boolean;
+  deal_status: DealStatus;
+  visit_status: VisitStatus;
+  purchase_timeline: PurchaseTimeline;
 }
 
 // Export filter interface

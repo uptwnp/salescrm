@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { LeadList } from './components/LeadList';
-import { LeadForm } from './components/LeadForm';
-import { SearchAndFilters } from './components/SearchAndFilters';
-import { Lead, USER_CREDENTIALS } from './types/options';
-import { Plus, LogOut, User } from 'lucide-react';
-import { Toaster } from 'react-hot-toast';
-import toast from 'react-hot-toast';
-import { sendWebhook, shouldTriggerWebhook } from './utils/webhook';
-import { parseNextActionTimeFilter } from './utils/filters';
-import { saveToCache, getFromCache, clearCache } from './utils/cache';
-import { Login } from './components/Login';
+import React, { useState, useEffect } from "react";
+import { LeadList } from "./components/LeadList";
+import { LeadForm } from "./components/LeadForm";
+import { SearchAndFilters } from "./components/SearchAndFilters";
+import { Lead, USER_CREDENTIALS } from "./types/options";
+import { Plus, LogOut, User } from "lucide-react";
+import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import { sendWebhook, shouldTriggerWebhook } from "./utils/webhook";
+import { parseNextActionTimeFilter } from "./utils/filters";
+import { saveToCache, getFromCache, clearCache } from "./utils/cache";
+import { Login } from "./components/Login";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [view, setView] = useState<'list' | 'grid'>(() => {
-    const savedView = localStorage.getItem('leadViewPreference');
-    return savedView === 'list' || savedView === 'grid' ? savedView : 'list';
+  const [view, setView] = useState<"list" | "grid">(() => {
+    const savedView = localStorage.getItem("leadViewPreference");
+    return savedView === "list" || savedView === "grid" ? savedView : "list";
   });
   const [selectedLead, setSelectedLead] = useState<Partial<Lead> | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -36,44 +36,46 @@ function App() {
   });
 
   const [page, setPage] = useState(() => {
-    const stored = localStorage.getItem('leadListPage');
+    const stored = localStorage.getItem("leadListPage");
     return stored ? parseInt(stored) : 1;
   });
   const [perPage] = useState(20);
   const [searchTerm, setSearchTerm] = useState(() => {
-    return localStorage.getItem('leadSearchTerm') || '';
+    return localStorage.getItem("leadSearchTerm") || "";
   });
   const [sortField, setSortField] = useState<keyof Lead>(() => {
-    return (localStorage.getItem('leadSortField') as keyof Lead) || 'id';
+    return (localStorage.getItem("leadSortField") as keyof Lead) || "id";
   });
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
-    return (localStorage.getItem('leadSortDirection') as 'asc' | 'desc') || 'desc';
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">(() => {
+    return (
+      (localStorage.getItem("leadSortDirection") as "asc" | "desc") || "desc"
+    );
   });
   const [filters, setFilters] = useState<Record<string, string>>(() => {
-    const stored = localStorage.getItem('leadFilters');
+    const stored = localStorage.getItem("leadFilters");
     return stored ? JSON.parse(stored) : {};
   });
   const [tags, setTags] = useState<string[]>(() => {
-    const stored = localStorage.getItem('leadTags');
+    const stored = localStorage.getItem("leadTags");
     return stored ? JSON.parse(stored) : [];
   });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isColumnsOpen, setIsColumnsOpen] = useState(false);
 
   const handleLogin = (username: string) => {
-    const user = USER_CREDENTIALS.find(u => u.username === username);
+    const user = USER_CREDENTIALS.find((u) => u.username === username);
     setLoggedInUser(username);
     setIsAdmin(user?.isAdmin || false);
-    
+
     // Only set the assigned_to filter for non-admin users
     if (!user?.isAdmin) {
-      setFilters(prev => ({ ...prev, assigned_to: username }));
+      setFilters((prev) => ({ ...prev, assigned_to: username }));
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('loggedInUser');
-    localStorage.removeItem('loginTimestamp');
+    localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("loginTimestamp");
     setLoggedInUser(null);
     setIsAdmin(false);
     setFilters({});
@@ -81,30 +83,30 @@ function App() {
   };
 
   useEffect(() => {
-    const lastOpenedLeadStr = localStorage.getItem('lastOpenedLead');
+    const lastOpenedLeadStr = localStorage.getItem("lastOpenedLead");
     if (lastOpenedLeadStr) {
       try {
         const lastOpenedLead = JSON.parse(lastOpenedLeadStr);
         setSelectedLead(lastOpenedLead);
         setIsFormOpen(true);
       } catch (error) {
-        console.error('Error parsing last opened lead:', error);
+        console.error("Error parsing last opened lead:", error);
       }
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('leadViewPreference', view);
-    localStorage.setItem('leadListPage', page.toString());
-    localStorage.setItem('leadSearchTerm', searchTerm);
-    localStorage.setItem('leadSortField', sortField);
-    localStorage.setItem('leadSortDirection', sortDirection);
-    localStorage.setItem('leadFilters', JSON.stringify(filters));
-    localStorage.setItem('leadTags', JSON.stringify(tags));
+    localStorage.setItem("leadViewPreference", view);
+    localStorage.setItem("leadListPage", page.toString());
+    localStorage.setItem("leadSearchTerm", searchTerm);
+    localStorage.setItem("leadSortField", sortField);
+    localStorage.setItem("leadSortDirection", sortDirection);
+    localStorage.setItem("leadFilters", JSON.stringify(filters));
+    localStorage.setItem("leadTags", JSON.stringify(tags));
   }, [view, page, searchTerm, sortField, sortDirection, filters, tags]);
 
   useEffect(() => {
-    localStorage.setItem('leadViewPreference', view);
+    localStorage.setItem("leadViewPreference", view);
   }, [view]);
 
   useEffect(() => {
@@ -126,18 +128,18 @@ function App() {
       }
       if (searchTerm) {
         event.preventDefault();
-        setSearchTerm('');
+        setSearchTerm("");
         return;
       }
     };
 
-    window.addEventListener('popstate', handleBackButton);
-    return () => window.removeEventListener('popstate', handleBackButton);
+    window.addEventListener("popstate", handleBackButton);
+    return () => window.removeEventListener("popstate", handleBackButton);
   }, [isFormOpen, isFiltersOpen, isColumnsOpen, searchTerm]);
 
   useEffect(() => {
     if (isFormOpen || isFiltersOpen || isColumnsOpen || searchTerm) {
-      window.history.pushState(null, '', window.location.pathname);
+      window.history.pushState(null, "", window.location.pathname);
     }
   }, [isFormOpen, isFiltersOpen, isColumnsOpen, searchTerm]);
 
@@ -145,12 +147,12 @@ function App() {
     setSearchTerm(term);
     setPage(1);
 
-    const phoneNumber = term.replace(/[\s+]/g, '');
+    const phoneNumber = term.replace(/[\s+]/g, "");
     if (/^\d{10,}$/.test(phoneNumber)) {
       try {
         await navigator.clipboard.writeText(phoneNumber);
       } catch (err) {
-        console.error('Failed to copy to clipboard:', err);
+        console.error("Failed to copy to clipboard:", err);
       }
     }
   };
@@ -160,18 +162,18 @@ function App() {
       const response = await fetch(
         `https://prop.digiheadway.in/api/new_lead.php?id=${id}`
       );
-      if (!response.ok) throw new Error('Failed to fetch lead');
+      if (!response.ok) throw new Error("Failed to fetch lead");
 
       const data = await response.json();
       if (data && !data.error) {
         setSelectedLead(data);
         setIsFormOpen(true);
       } else {
-        throw new Error('Lead not found');
+        throw new Error("Lead not found");
       }
     } catch (error) {
-      console.error('Error fetching lead:', error);
-      toast.error('Failed to load lead');
+      console.error("Error fetching lead:", error);
+      toast.error("Failed to load lead");
       handleCloseModal();
     }
   };
@@ -181,14 +183,25 @@ function App() {
       setIsLoading(true);
       setError(null);
 
-      const queryParams = new URLSearchParams({
-        page: page.toString(),
-        per_page: perPage.toString(),
-        sort_field: sortField,
-        sort_order: sortDirection,
-        ...(searchTerm && { search: searchTerm }),
-        ...(tags.length > 0 && { tags: tags.join(',') }),
-        ...filters,
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", page.toString());
+      queryParams.append("per_page", perPage.toString());
+      queryParams.append("sort_field", sortField);
+      queryParams.append("sort_order", sortDirection);
+
+      if (searchTerm) {
+        queryParams.append("search", searchTerm);
+      }
+
+      if (tags.length > 0) {
+        queryParams.append("tags", tags.join(","));
+      }
+
+      // Only add filters that have non-empty values
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value && value.trim() !== "") {
+          queryParams.append(key, value);
+        }
       });
 
       const cachedData = getFromCache();
@@ -233,7 +246,7 @@ function App() {
         });
 
         const params = new URLSearchParams(window.location.search);
-        const leadId = params.get('lead');
+        const leadId = params.get("lead");
         if (leadId) {
           const lead = data.data?.find((l: Lead) => l.id === parseInt(leadId));
           if (lead) {
@@ -242,14 +255,14 @@ function App() {
           }
         }
       } catch (error) {
-        console.error('Network error:', error);
+        console.error("Network error:", error);
         if (!cachedData) {
-          setError('Unable to load leads. Using cached data if available.');
+          setError("Unable to load leads. Using cached data if available.");
         }
       }
     } catch (error) {
-      console.error('Error fetching leads:', error);
-      setError('Unable to load leads. Please try again.');
+      console.error("Error fetching leads:", error);
+      setError("Unable to load leads. Please try again.");
       setLeads([]);
     } finally {
       setIsLoading(false);
@@ -272,17 +285,17 @@ function App() {
     try {
       const isNewLead = !lead.id;
       const url =
-        'https://prop.digiheadway.in/api/new_lead.php' +
-        (lead.id ? `?id=${lead.id}` : '');
+        "https://prop.digiheadway.in/api/new_lead.php" +
+        (lead.id ? `?id=${lead.id}` : "");
       const response = await fetch(url, {
-        method: lead.id ? 'PUT' : 'POST',
+        method: lead.id ? "PUT" : "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(lead),
       });
 
-      if (!response.ok) throw new Error('Failed to save lead');
+      if (!response.ok) throw new Error("Failed to save lead");
 
       const updatedLead = await response.json();
 
@@ -290,7 +303,7 @@ function App() {
         setLeads((prevLeads) => [updatedLead, ...prevLeads]);
         sendWebhook(updatedLead);
         handleCloseModal();
-        toast.success('Lead created successfully', { duration: 2000 });
+        toast.success("Lead created successfully", { duration: 2000 });
         fetchLeads();
       } else {
         setLeads((prevLeads) => {
@@ -300,8 +313,8 @@ function App() {
         });
       }
     } catch (error) {
-      console.error('Error saving lead:', error);
-      toast.error('Failed to save lead. Please try again.', { duration: 5000 });
+      console.error("Error saving lead:", error);
+      toast.error("Failed to save lead. Please try again.", { duration: 5000 });
     }
   };
 
@@ -310,20 +323,20 @@ function App() {
       const response = await fetch(
         `https://prop.digiheadway.in/api/new_lead.php?id=${id}`,
         {
-          method: 'DELETE',
+          method: "DELETE",
         }
       );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete lead');
+        throw new Error(errorData.message || "Failed to delete lead");
       }
 
       setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== id));
-      toast.success('Lead deleted successfully', { duration: 2000 });
+      toast.success("Lead deleted successfully", { duration: 2000 });
     } catch (error) {
-      console.error('Error deleting lead:', error);
-      toast.error('Failed to delete lead. Please try again.', {
+      console.error("Error deleting lead:", error);
+      toast.error("Failed to delete lead. Please try again.", {
         duration: 5000,
       });
       throw error;
@@ -333,7 +346,7 @@ function App() {
   const handleCloseModal = () => {
     setSelectedLead(null);
     setIsFormOpen(false);
-    localStorage.removeItem('lastOpenedLead');
+    localStorage.removeItem("lastOpenedLead");
   };
 
   const handleInlineEdit = async (
@@ -360,14 +373,14 @@ function App() {
       setLeads((prevLeads) =>
         prevLeads.map((l) => (l.id === leadId ? lead : l))
       );
-      console.error('Error updating lead:', error);
-      toast.error('Failed to update. Please try again.', { duration: 5000 });
+      console.error("Error updating lead:", error);
+      toast.error("Failed to update. Please try again.", { duration: 5000 });
     }
   };
 
   const handleSort = (field: keyof Lead) => {
     const newDirection =
-      field === sortField && sortDirection === 'desc' ? 'asc' : 'desc';
+      field === sortField && sortDirection === "desc" ? "asc" : "desc";
     setSortDirection(newDirection);
     setSortField(field);
     setPage(1);
@@ -382,8 +395,8 @@ function App() {
 
   const handleClearFilters = () => {
     // For non-admin users, preserve their assigned_to filter
-    if (!isAdmin) {
-      setFilters({ assigned_to: loggedInUser || '' });
+    if (!isAdmin && loggedInUser) {
+      setFilters({ assigned_to: loggedInUser });
     } else {
       // For admin users, clear all filters
       setFilters({});

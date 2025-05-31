@@ -9,7 +9,7 @@ import {
   LEAD_STAGES,
   NEXT_ACTIONS,
   PROPERTY_TYPES,
-  PURPOSES,
+  PURPOSE,
   INTENT,
   PRIORITIES,
   SEGMENTS,
@@ -491,15 +491,15 @@ export const LeadForm: React.FC<LeadFormProps> = ({
                   </label>
                   <select
                     className="w-full p-2 border rounded-lg"
-                    value={formData.purposes || ""}
+                    value={formData.purpose || ""}
                     onChange={(e) =>
                       isNewLead
-                        ? handleFieldChange("purposes", e.target.value)
-                        : handleImmediateUpdate("purposes", e.target.value)
+                        ? handleFieldChange("purpose", e.target.value)
+                        : handleImmediateUpdate("purpose", e.target.value)
                     }
                   >
                     <option value="">Select Purpose</option>
-                    {PURPOSES.map((purpose) => (
+                    {PURPOSE.map((purpose) => (
                       <option key={purpose} value={purpose}>
                         {purpose}
                       </option>

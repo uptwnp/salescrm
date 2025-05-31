@@ -8,7 +8,7 @@ import {
   PROPERTY_TYPES,
   PRIORITIES,
   SEGMENTS,
-  PURPOSES,
+  PURPOSE,
   ASSIGNEES,
   SIZES,
   TAGS,
@@ -59,7 +59,7 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
     budget_max: currentFilters.budget_max || "",
     source: currentFilters.source || "",
     segment: currentFilters.segment || "",
-    purposes: currentFilters.purposes || "",
+    purpose: currentFilters.purpose || "",
     next_action_time: currentFilters.next_action_time || "",
     custom_date: currentFilters.custom_date || "",
     assigned_to: currentFilters.assigned_to || "",
@@ -109,7 +109,7 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
       budget_max: "",
       source: "",
       segment: "",
-      purposes: "",
+      purpose: "",
       next_action_time: "",
       custom_date: "",
       assigned_to: "",
@@ -291,13 +291,13 @@ export const LeadFiltersModal: React.FC<LeadFiltersModalProps> = ({
               </label>
               <select
                 className="w-full p-2 border rounded-lg"
-                value={filters.purposes}
+                value={filters.purpose}
                 onChange={(e) =>
-                  setFilters({ ...filters, purposes: e.target.value })
+                  setFilters({ ...filters, purpose: e.target.value })
                 }
               >
-                <option value="">All Purposes</option>
-                {PURPOSES.map((purpose) => (
+                <option value="">All Purpose</option>
+                {PURPOSE.map((purpose) => (
                   <option key={purpose} value={purpose}>
                     {purpose}
                   </option>

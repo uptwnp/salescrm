@@ -183,7 +183,7 @@ const DEFAULT_COLUMNS: Column[] = [
     minWidth: 150,
   },
   {
-    key: "purposes",
+    key: "purpose",
     label: "Purpose",
     visible: false,
     editable: true,
@@ -445,7 +445,7 @@ export const LeadList: React.FC<LeadListProps> = ({
       case "next_action":
       case "segment":
       case "preferred_type":
-      case "purposes":
+      case "purpose":
       case "medium":
       case "visit_status":
       case "purchase_timeline":

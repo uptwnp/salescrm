@@ -136,7 +136,7 @@ export const LEAD_OPTIONS = {
     "300 Gaj+",
   ],
 
-  PURPOSES: [
+  PURPOSE: [
     "Living",
     "Investment",
     "Rental Income",
@@ -237,7 +237,7 @@ export const LEAD_OPTIONS = {
 export const LEAD_STAGES = LEAD_OPTIONS.STAGES;
 export const NEXT_ACTIONS = LEAD_OPTIONS.NEXT_ACTIONS;
 export const PROPERTY_TYPES = LEAD_OPTIONS.PROPERTY_TYPES;
-export const PURPOSES = LEAD_OPTIONS.PURPOSES;
+export const PURPOSE = LEAD_OPTIONS.PURPOSE;
 export const INTENT = LEAD_OPTIONS.INTENT;
 export const PRIORITIES = LEAD_OPTIONS.PRIORITIES;
 export const SEGMENTS = LEAD_OPTIONS.SEGMENTS;
@@ -256,7 +256,7 @@ export const PURCHASE_TIMELINE = LEAD_OPTIONS.PURCHASE_TIMELINE;
 export type LeadStage = (typeof LEAD_OPTIONS.STAGES)[number] | null;
 export type NextAction = (typeof LEAD_OPTIONS.NEXT_ACTIONS)[number] | null;
 export type PropertyType = string | null; // Changed to string to support comma-separated values
-export type Purpose = (typeof LEAD_OPTIONS.PURPOSES)[number];
+export type Purpose = (typeof LEAD_OPTIONS.PURPOSE)[number];
 export type Segment = (typeof LEAD_OPTIONS.SEGMENTS)[number];
 export type Size = (typeof LEAD_OPTIONS.SIZES)[number];
 export type DealStatus = (typeof LEAD_OPTIONS.DEAL_STATUS)[number] | null;
@@ -279,7 +279,7 @@ export interface Lead {
   preferred_area: string | null;
   preferred_type: string | null;
   size: string | null;
-  purposes: string | null;
+  purpose: string | null;
   stage: LeadStage;
   priority: number | null;
   next_action: NextAction;
@@ -311,7 +311,7 @@ export interface LeadFilters {
   search: string;
   stage: LeadStage[];
   propertyTypes: PropertyType[];
-  purposes: Purpose[];
+  purpose: Purpose[];
   budget: {
     min: number | null;
     max: number | null;
